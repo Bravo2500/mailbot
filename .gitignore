@@ -12,6 +12,7 @@ syntax: glob
 *.pyc
 *.pyo
 _wrk/*
+/var/
 
 mailbot.iml
 
