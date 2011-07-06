@@ -1,11 +1,13 @@
-#!/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 
 """
     batch smtp sender
 
-    sender.py path/to/data/dir
+    crontab: (www)
+
+    */1 * * * *  sender.py path/to/data/dir
 """
 
 SMTP_HOST = "localhost"
