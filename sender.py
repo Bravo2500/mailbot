@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 """
     batch smtp sender
 
     crontab: (www)
 
-    */1 * * * *  sender.py path/to/data/dir
+    */1 * * * *  sender.py path/to/base_dir
 """
 
 SMTP_HOST = "localhost"
@@ -16,7 +15,7 @@ SMTP_USER = ""
 SMTP_PASS = ""
 SMTP_FROM = "info@100druzei.info"
 
-EMAIL_FROM = "100 Друзей <info@100druzei.info>"
+EMAIL_FROM = u"100 Друзей"
 EMAIL_REPL = "200@100druzei.info"
 
 TASK_SUFFIX = ".data.json"
@@ -32,7 +31,8 @@ from email import Charset
 from email.header import Header
 from email.mime.text import MIMEText
 
-Charset.add_charset('utf-8', Charset.SHORTEST, Charset.QP, 'utf-8')
+#Charset.add_charset('utf-8', Charset.SHORTEST, Charset.QP, 'utf-8')
+Charset.add_charset('utf-8', Charset.QP, Charset.QP, 'utf-8')
 
 
 def err(msg):
@@ -54,7 +54,7 @@ def send_mail(email, subj, text):
 
     msg = MIMEText(text.encode('utf-8'))
     msg.set_charset('utf-8')
-    msg['From'] = Header(EMAIL_FROM,'utf-8').encode()
+    msg['From'] = Header(EMAIL_FROM,'utf-8').encode()+" <"+SMTP_FROM+">"
     msg['To'] = Header(email,'utf-8').encode()
     msg['Replay-To'] = Header(EMAIL_REPL,'utf-8').encode()
     msg['Subject'] = Header(subj,'utf-8').encode()
@@ -103,19 +103,36 @@ def process_file(base_dir, in_name, out_name):
     flush_result(res, of)
 #--
 
-def scandir(base_dir):
-    fls = sorted(os.listdir(base_dir))
-    sl = len(TASK_SUFFIX)
-    for f in fls:
-        if f.endswith(TASK_SUFFIX):
-            out = f[:-sl]+REPT_SUFFIX
-            if out in fls:
-                continue
-            process_file(base_dir, f, out)
-            return
+#def scandir(base_dir):
+#    fls = sorted(os.listdir(base_dir))
+#    sl = len(TASK_SUFFIX)
+#    for f in fls:
+#        if f.endswith(TASK_SUFFIX):
+#            out = f[:-sl]+REPT_SUFFIX
+#            if out in fls:
+#                continue
+#            process_file(base_dir, f, out)
+#            return
+#        #-
+#    #-
+##--
+
+def scandir(base_dirs):
+    for base_dir in base_dirs:
+        if os.access(base_dir, os.R_OK):
+            fls = sorted(os.listdir(base_dir))
+            sl = len(TASK_SUFFIX)
+            for f in fls:
+                if f.endswith(TASK_SUFFIX):
+                    out = f[:-sl]+REPT_SUFFIX
+                    if out in fls:
+                        continue
+                    process_file(base_dir, f, out)
+                    return
         #-
     #-
 #--
+
 
 if __name__ == "__main__":
 
