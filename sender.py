@@ -14,9 +14,10 @@ SMTP_HOST = "localhost"
 SMTP_PORT = "25"
 SMTP_USER = ""
 SMTP_PASS = ""
-
 SMTP_FROM = "info@100druzei.info"
 
+EMAIL_FROM = "100 Друзей <info@100druzei.info>"
+EMAIL_REPL = "200@100druzei.info"
 
 TASK_SUFFIX = ".data.json"
 REPT_SUFFIX = ".result.json"
@@ -53,8 +54,9 @@ def send_mail(email, subj, text):
 
     msg = MIMEText(text.encode('utf-8'))
     msg.set_charset('utf-8')
-    msg['From'] = SMTP_FROM
+    msg['From'] = Header(EMAIL_FROM,'utf-8').encode()
     msg['To'] = Header(email,'utf-8').encode()
+    msg['Replay-To'] = Header(EMAIL_REPL,'utf-8').encode()
     msg['Subject'] = Header(subj,'utf-8').encode()
 
     s = smtplib.SMTP()
