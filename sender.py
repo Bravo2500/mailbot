@@ -6,7 +6,7 @@
 
     crontab: (www)
 
-    */1 * * * *  sender.py path/to/base_dir
+    */1 * * * *  sender.py base_dir [base_dir2 ...]
 """
 
 SMTP_HOST = "localhost"
@@ -56,7 +56,7 @@ def send_mail(email, subj, text):
     msg.set_charset('utf-8')
     msg['From'] = Header(EMAIL_FROM,'utf-8').encode()+" <"+SMTP_FROM+">"
     msg['To'] = Header(email,'utf-8').encode()
-    msg['Replay-To'] = Header(EMAIL_REPL,'utf-8').encode()
+    msg['Reply-To'] = EMAIL_REPL
     msg['Subject'] = Header(subj,'utf-8').encode()
 
     s = smtplib.SMTP()
@@ -137,7 +137,7 @@ def scandir(base_dirs):
 if __name__ == "__main__":
 
     if len(sys.argv) > 1:
-        scandir(sys.argv[1])
+        scandir(sys.argv[1:])
     else:
         sys.stderr.write("Parameter missing\n")
         sys.exit(1)
